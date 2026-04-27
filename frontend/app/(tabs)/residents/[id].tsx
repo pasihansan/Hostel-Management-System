@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
+import { ActionToast } from '@/components/resident/action-toast';
 import { FeedbackForm } from '@/components/resident/feedback-form';
 import { RatingBadge } from '@/components/resident/rating-badge';
 import { ResidentScreen } from '@/components/resident/resident-screen';
@@ -12,6 +13,7 @@ export default function ResidentDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [resident, setResident] = useState<Resident | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const loadResident = useCallback(async () => {
     if (!id) {
@@ -22,7 +24,7 @@ export default function ResidentDetailScreen() {
       const data = await fetchResidentById(id);
       setResident(data);
     } catch (error) {
-      Alert.alert('Error', (error as Error).message);
+      setToast({ type: 'error', message: (error as Error).message });
     }
   }, [id]);
 
@@ -43,9 +45,10 @@ export default function ResidentDetailScreen() {
         onPress: async () => {
           try {
             await deleteResident(id);
+            setToast({ type: 'success', message: 'Resident deleted successfully.' });
             router.replace('/(tabs)/residents');
           } catch (error) {
-            Alert.alert('Error', (error as Error).message);
+            setToast({ type: 'error', message: (error as Error).message });
           }
         },
       },
@@ -54,7 +57,13 @@ export default function ResidentDetailScreen() {
 
   if (!resident) {
     return (
-      <ResidentScreen title="Resident Details" subtitle="Loading resident profile...">
+      <ResidentScreen title="Resident Details" subtitle="Loading resident profile..." showBackButton>
+        <ActionToast
+          visible={!!toast}
+          type={toast?.type ?? 'success'}
+          message={toast?.message ?? ''}
+          onHide={() => setToast(null)}
+        />
         <Text style={styles.loadingText}>Please wait...</Text>
       </ResidentScreen>
     );
@@ -65,11 +74,18 @@ export default function ResidentDetailScreen() {
       title={resident.fullName}
       subtitle={`Room ${resident.roomNumber}`}
       useScroll={false}
+      showBackButton
       rightAction={
         <Pressable style={styles.editButton} onPress={() => router.push(`/(tabs)/residents/edit/${resident.id}`)}>
           <Text style={styles.editButtonText}>Edit</Text>
         </Pressable>
       }>
+      <ActionToast
+        visible={!!toast}
+        type={toast?.type ?? 'success'}
+        message={toast?.message ?? ''}
+        onHide={() => setToast(null)}
+      />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.card}>
           <View style={styles.titleRow}>
@@ -94,9 +110,9 @@ export default function ResidentDetailScreen() {
             try {
               const updated = await addResidentFeedback(id, payload);
               setResident(updated);
-              Alert.alert('Success', 'Feedback added.');
+              setToast({ type: 'success', message: 'Feedback added successfully.' });
             } catch (error) {
-              Alert.alert('Error', (error as Error).message);
+              setToast({ type: 'error', message: (error as Error).message });
             }
           }}
         />

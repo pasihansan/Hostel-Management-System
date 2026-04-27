@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ResidentTheme } from '@/constants/resident-management-theme';
+import { FadeSlideIn } from './fade-slide-in';
 
 type FeedbackFormProps = {
   onSubmit: (payload: { rating: number; comment?: string }) => Promise<void>;
@@ -24,7 +25,8 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
   }
 
   return (
-    <View style={styles.card}>
+    <FadeSlideIn delay={110}>
+      <View style={styles.card}>
       <Text style={styles.title}>Add Feedback</Text>
       <View style={styles.starRow}>
         {[1, 2, 3, 4, 5].map((value) => (
@@ -47,7 +49,8 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
       <Pressable style={styles.button} onPress={handleSave}>
         <Text style={styles.buttonText}>{isSubmitting ? 'Saving...' : 'Save Feedback'}</Text>
       </Pressable>
-    </View>
+      </View>
+    </FadeSlideIn>
   );
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
+import { ActionToast } from '@/components/resident/action-toast';
 import { ResidentForm } from '@/components/resident/resident-form';
 import { ResidentScreen } from '@/components/resident/resident-screen';
 import { fetchResidentById, updateResident, type Resident } from '@/services/resident-api';
@@ -10,6 +10,7 @@ export default function ResidentEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [resident, setResident] = useState<Resident | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     async function loadResident() {
@@ -21,7 +22,7 @@ export default function ResidentEditScreen() {
         const data = await fetchResidentById(id);
         setResident(data);
       } catch (error) {
-        Alert.alert('Error', (error as Error).message);
+        setToast({ type: 'error', message: (error as Error).message });
       }
     }
 
@@ -29,7 +30,13 @@ export default function ResidentEditScreen() {
   }, [id]);
 
   return (
-    <ResidentScreen title="Update Resident" subtitle="Edit profile and contact details">
+    <ResidentScreen title="Update Resident" subtitle="Edit profile and contact details" showBackButton>
+      <ActionToast
+        visible={!!toast}
+        type={toast?.type ?? 'success'}
+        message={toast?.message ?? ''}
+        onHide={() => setToast(null)}
+      />
       {resident && (
         <ResidentForm
           initialValues={resident}
@@ -41,10 +48,12 @@ export default function ResidentEditScreen() {
 
             try {
               await updateResident(id, payload);
-              Alert.alert('Success', 'Resident updated successfully.');
-              router.replace(`/(tabs)/residents/${id}`);
+              setToast({ type: 'success', message: 'Resident updated successfully.' });
+              setTimeout(() => {
+                router.replace(`/(tabs)/residents/${id}`);
+              }, 700);
             } catch (error) {
-              Alert.alert('Error', (error as Error).message);
+              setToast({ type: 'error', message: (error as Error).message });
             }
           }}
         />

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { ActionToast } from '@/components/resident/action-toast';
 import { InsightsPanel } from '@/components/resident/insights-panel';
 import { ResidentCard } from '@/components/resident/resident-card';
 import { ResidentScreen } from '@/components/resident/resident-screen';
@@ -22,6 +23,7 @@ export default function ResidentListScreen() {
   const [loading, setLoading] = useState(false);
   const [residents, setResidents] = useState<Resident[]>([]);
   const [summary, setSummary] = useState<ResidentSummary | undefined>(undefined);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -33,7 +35,7 @@ export default function ResidentListScreen() {
       setResidents(list);
       setSummary(insight);
     } catch (error) {
-      Alert.alert('Error', (error as Error).message);
+      setToast({ type: 'error', message: (error as Error).message });
     } finally {
       setLoading(false);
     }
@@ -53,8 +55,9 @@ export default function ResidentListScreen() {
           try {
             await deleteResident(id);
             await loadData();
+            setToast({ type: 'success', message: 'Resident removed successfully.' });
           } catch (error) {
-            Alert.alert('Error', (error as Error).message);
+            setToast({ type: 'error', message: (error as Error).message });
           }
         },
       },
@@ -71,6 +74,12 @@ export default function ResidentListScreen() {
           <Text style={styles.addButtonText}>+ Add</Text>
         </Pressable>
       }>
+      <ActionToast
+        visible={!!toast}
+        type={toast?.type ?? 'success'}
+        message={toast?.message ?? ''}
+        onHide={() => setToast(null)}
+      />
       <InsightsPanel summary={summary} />
       <ResidentSearchBar value={searchText} onChangeText={setSearchText} />
 
@@ -81,9 +90,13 @@ export default function ResidentListScreen() {
         ListEmptyComponent={
           <Text style={styles.emptyText}>{loading ? 'Loading...' : 'No residents found.'}</Text>
         }
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={styles.listItemWrap}>
-            <ResidentCard resident={item} onPress={(id) => router.push(`/(tabs)/residents/${id}`)} />
+            <ResidentCard
+              resident={item}
+              onPress={(id) => router.push(`/(tabs)/residents/${id}`)}
+              animationDelay={90 + (index % 6) * 45}
+            />
             <Pressable style={styles.quickDelete} onPress={() => confirmDelete(item.id)}>
               <Text style={styles.quickDeleteText}>Delete</Text>
             </Pressable>

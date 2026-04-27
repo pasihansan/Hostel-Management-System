@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { ResidentTheme } from '@/constants/resident-management-theme';
 import type { ResidentSummary } from '@/services/resident-api';
+import { FadeSlideIn } from './fade-slide-in';
 
 type InsightsPanelProps = {
   summary?: ResidentSummary;
@@ -13,7 +14,8 @@ export function InsightsPanel({ summary }: InsightsPanelProps) {
   }
 
   return (
-    <View style={styles.panel}>
+    <FadeSlideIn delay={40}>
+      <View style={styles.panel}>
       <Text style={styles.title}>Resident Insights</Text>
       <View style={styles.grid}>
         <Stat label="Total" value={String(summary.totalResidents)} />
@@ -30,7 +32,8 @@ export function InsightsPanel({ summary }: InsightsPanelProps) {
           ))}
         </View>
       )}
-    </View>
+      </View>
+    </FadeSlideIn>
   );
 }
 

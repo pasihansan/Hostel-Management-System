@@ -62,8 +62,10 @@ export type ResidentPayload = {
 
 type ValidationErrors = Record<string, string>;
 
+const envApiUrl = process.env.EXPO_PUBLIC_RESIDENT_API_URL;
 const fallbackApiUrl = Platform.OS === 'android' ? 'http://10.0.2.2:5000' : 'http://localhost:5000';
-const configuredApi = (Constants.expoConfig?.extra?.residentApiUrl as string | undefined) ?? fallbackApiUrl;
+const configuredApi =
+  envApiUrl ?? (Constants.expoConfig?.extra?.residentApiUrl as string | undefined) ?? fallbackApiUrl;
 
 const API_BASE_URL = configuredApi.replace(/\/$/, '');
 

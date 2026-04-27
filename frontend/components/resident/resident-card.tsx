@@ -2,28 +2,32 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ResidentTheme } from '@/constants/resident-management-theme';
 import type { Resident } from '@/services/resident-api';
+import { FadeSlideIn } from './fade-slide-in';
 import { RatingBadge } from './rating-badge';
 
 type ResidentCardProps = {
   resident: Resident;
   onPress: (id: string) => void;
+  animationDelay?: number;
 };
 
-export function ResidentCard({ resident, onPress }: ResidentCardProps) {
+export function ResidentCard({ resident, onPress, animationDelay = 0 }: ResidentCardProps) {
   return (
-    <Pressable style={styles.card} onPress={() => onPress(resident.id)}>
-      <View style={styles.rowTop}>
-        <Text style={styles.name}>{resident.fullName}</Text>
-        <RatingBadge rating={resident.averageRating || 0} />
-      </View>
-      <Text style={styles.meta}>Room {resident.roomNumber}</Text>
-      <Text style={styles.meta}>{resident.phone}</Text>
-      <Text style={styles.meta}>{resident.email}</Text>
-      <View style={styles.statusRow}>
-        <View style={[styles.dot, { backgroundColor: resident.isActive ? '#10B981' : '#9CA3AF' }]} />
-        <Text style={styles.statusText}>{resident.isActive ? 'Active' : 'Inactive'}</Text>
-      </View>
-    </Pressable>
+    <FadeSlideIn delay={animationDelay}>
+      <Pressable style={styles.card} onPress={() => onPress(resident.id)}>
+        <View style={styles.rowTop}>
+          <Text style={styles.name}>{resident.fullName}</Text>
+          <RatingBadge rating={resident.averageRating || 0} />
+        </View>
+        <Text style={styles.meta}>Room {resident.roomNumber}</Text>
+        <Text style={styles.meta}>{resident.phone}</Text>
+        <Text style={styles.meta}>{resident.email}</Text>
+        <View style={styles.statusRow}>
+          <View style={[styles.dot, { backgroundColor: resident.isActive ? '#10B981' : '#9CA3AF' }]} />
+          <Text style={styles.statusText}>{resident.isActive ? 'Active' : 'Inactive'}</Text>
+        </View>
+      </Pressable>
+    </FadeSlideIn>
   );
 }
 

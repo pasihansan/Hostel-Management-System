@@ -1,28 +1,34 @@
 import { Fonts } from '@/constants/theme';
+import { Platform } from 'react-native';
 
 export const ResidentTheme = {
   colors: {
-    pageBg: '#F4F9FF',
+    pageBg: '#F5F7FB',
     cardBg: '#FFFFFF',
     brand: '#1D4ED8',
-    brandSoft: '#DBEAFE',
+    brandSoft: '#EAF1FF',
     textPrimary: '#0F172A',
-    textSecondary: '#475569',
-    border: '#BFDBFE',
+    textSecondary: '#64748B',
+    border: '#D7DFEA',
+    inputBg: '#F8FAFD',
     danger: '#DC2626',
     success: '#059669',
   },
   fonts: {
-    family: Fonts?.sans ?? 'normal',
+    family: Platform.select({
+      ios: 'SF Pro Text',
+      android: 'sans-serif',
+      default: Fonts?.sans ?? 'normal',
+    }),
     tiny: 11,
-    small: 13,
+    small: 12,
     base: 14,
     medium: 15,
-    heading: 18,
+    heading: 20,
   },
   radius: {
-    sm: 8,
-    md: 12,
-    lg: 16,
+    sm: 6,
+    md: 10,
+    lg: 12,
   },
 };

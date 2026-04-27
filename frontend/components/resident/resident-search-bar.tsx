@@ -23,14 +23,19 @@ export function ResidentSearchBar({ value, onChangeText }: ResidentSearchBarProp
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: ResidentTheme.colors.cardBg,
+    backgroundColor: ResidentTheme.colors.inputBg,
     borderRadius: ResidentTheme.radius.md,
     borderWidth: 1,
     borderColor: ResidentTheme.colors.border,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
   },
   input: {
-    height: 42,
+    height: 44,
     fontFamily: ResidentTheme.fonts.family,
     fontSize: ResidentTheme.fonts.small,
     color: ResidentTheme.colors.textPrimary,

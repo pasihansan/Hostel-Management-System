@@ -11,6 +11,7 @@ import {
 import { ResidentTheme } from '@/constants/resident-management-theme';
 import type { ResidentPayload } from '@/services/resident-api';
 import { validateResidentInput } from '@/services/resident-api';
+import { FadeSlideIn } from './fade-slide-in';
 
 type ResidentFormProps = {
   initialValues?: Partial<ResidentPayload>;
@@ -134,7 +135,8 @@ export function ResidentForm({
   }
 
   return (
-    <View style={styles.formCard}>
+    <FadeSlideIn delay={70} offset={10}>
+      <View style={styles.formCard}>
       {showTestFillButton && (
         <Pressable style={styles.testFillButton} onPress={fillRandomTestData}>
           <Text style={styles.testFillButtonText}>Fill Test Data</Text>
@@ -237,7 +239,8 @@ export function ResidentForm({
       <Pressable style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]} onPress={handleSubmit}>
         <Text style={styles.submitText}>{submitting ? 'Please wait...' : submitLabel}</Text>
       </Pressable>
-    </View>
+      </View>
+    </FadeSlideIn>
   );
 }
 
@@ -270,6 +273,8 @@ function LabeledInput({
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         multiline={multiline}
+        placeholder={label}
+        placeholderTextColor="#9AA8BC"
       />
       {!!error && <Text style={styles.errorText}>{error}</Text>}
     </View>
@@ -282,8 +287,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: ResidentTheme.colors.border,
     borderRadius: ResidentTheme.radius.lg,
-    padding: 12,
-    gap: 10,
+    padding: 14,
+    gap: 9,
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 1,
   },
   rowWrap: {
     flexDirection: 'row',
@@ -332,18 +342,20 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: ResidentTheme.fonts.tiny,
     fontFamily: ResidentTheme.fonts.family,
-    color: ResidentTheme.colors.textSecondary,
+    color: '#6D7E95',
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   input: {
     borderWidth: 1,
     borderColor: ResidentTheme.colors.border,
     borderRadius: ResidentTheme.radius.sm,
-    paddingHorizontal: 10,
-    paddingVertical: 9,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     color: ResidentTheme.colors.textPrimary,
     fontFamily: ResidentTheme.fonts.family,
     fontSize: ResidentTheme.fonts.small,
-    backgroundColor: '#F8FBFF',
+    backgroundColor: ResidentTheme.colors.inputBg,
   },
   inputMulti: {
     minHeight: 72,
